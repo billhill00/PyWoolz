@@ -1,4 +1,4 @@
-*RWoolz*
+#RWoolz#
 
 An R binding to Woolz (https://github.com/ma-tech/Woolz). Woolz is an
 efficient image processing system developed mainly for atlas informatics
