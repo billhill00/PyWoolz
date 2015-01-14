@@ -8,8 +8,8 @@ and set operations in 2D and 3D.
 The binding relies on R and the Woolz libraries which should be build with
 position independent code.
 
-To build the binding: Edit src/Makevars so that the Woolz include and
-library files can be found.
+To build the binding edit src/Makevars so that the Woolz include and
+library files can be found, then
 
 in src/ run
   
@@ -20,11 +20,15 @@ it should then be possible to run the test R script
     cd Test/
 
     export LD_LIBRARY_PATH=../src
+
 or
+
     setenv LD_LIBRARY_PATH ../src
 
     ./test.R
+
 or
+
     R --no-save < test.R
 
 Expected output:
