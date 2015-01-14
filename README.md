@@ -18,18 +18,8 @@ in src/ run
 it should then be possible to run the test R script
 
     cd Test/
-
-    export LD_LIBRARY_PATH=../src
-
-or
-
-    setenv LD_LIBRARY_PATH ../src
-
-    ./test.R
-
-or
-
-    R --no-save < test.R
+    export LD_LIBRARY_PATH=../src  # or setenv LD_LIBRARY_PATH ../src
+    ./test.R  # or R --no-save < test.R
 
 Expected output:
 
