@@ -1,0 +1,18 @@
+WLZ_HOME	= /opt/MouseAtlas
+PKG_OBJECTS 	= RWlzObject.o
+PKG_CFLAGS	= -fopenmp
+PKG_CPPFLAGS 	= -I/usr/lib64/R/include \
+                  -I$(WLZ_HOME)/include
+PKG_LIBS	= -L/usr/lib64/R/lib \
+         	  -L$(WLZ_HOME)/lib \
+		  -lWlz -lAlg -lAlc -lR -lgomp
+
+$(SHLIB): 		libRWlz.so
+
+libRWlz.so:		RWlzObject.o
+			$(CC) -shared -o $@ $< $(PKG_LIBS)                                                          
+
+RWlzObject.o:		RWlzObject.c
+
+clean:
+			$(RM) libRWlzObject.so RWlzObject.o
