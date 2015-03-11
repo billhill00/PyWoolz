@@ -45,6 +45,11 @@ WlzXOR <- function(objs)
   .Call("RWlzXOR", objs);
 }
 
+WlzGreyStats <- function(objs)
+{
+  .Call("RWlzGreyStats", objs);
+}
+
 WlzIsEmpty <- function(objs) 
 {
   .Call("RWlzIsEmpty", objs)

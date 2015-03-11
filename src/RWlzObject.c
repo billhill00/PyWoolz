@@ -6,6 +6,7 @@ typedef enum _RWlzNObjOpType
 {
   RWLZ_NOBJOP_BBOX,
   RWLZ_NOBJOP_EMPTY,
+  RWLZ_NOBJOP_GREYSTATS,
   RWLZ_NOBJOP_INTERSECT,
   RWLZ_NOBJOP_OBJECTTYPE,
   RWLZ_NOBJOP_UNION,
@@ -154,6 +155,94 @@ static SEXP			RWlzNObjOp(
 	  }
 	  UNPROTECT(10);
         }
+	break;
+      case RWLZ_NOBJOP_GREYSTATS:
+        {
+	  int	i;
+	  SEXP	rCls,
+		rNam,
+		rRow,
+	        rVol,
+	  	rGType,
+		rMin,
+		rMax,
+		rSum,
+		rSsq,
+		rMean,
+		rStd;
+
+          PROTECT(rtn = allocVector(VECSXP, 8));
+          PROTECT(rCls = allocVector(STRSXP, 1));
+	  PROTECT(rNam = allocVector(STRSXP, 8));
+	  PROTECT(rRow = allocVector(STRSXP, n));
+	  PROTECT(rVol = allocVector(REALSXP, n));
+	  PROTECT(rGType = allocVector(STRSXP, n));
+	  PROTECT(rMin = allocVector(REALSXP, n));
+	  PROTECT(rMax = allocVector(REALSXP, n));
+	  PROTECT(rSum = allocVector(REALSXP, n));
+	  PROTECT(rSsq = allocVector(REALSXP, n));
+	  PROTECT(rMean = allocVector(REALSXP, n));
+	  PROTECT(rStd = allocVector(REALSXP, n));
+	  for(i = 0; i < n; ++i)
+	  {
+	    int	vol;
+	    double min,
+	    	   max,
+		   sum,
+		   ssq,
+		   mean,
+		   std;
+	    WlzGreyType gType;
+
+	    vol = WlzGreyStats(objs[i], &gType,
+	    		       &min, &max, &sum, &ssq, &mean, &std,
+	                       &errNum);
+	    if(errNum == WLZ_ERR_NONE)
+	    {
+	      char buf[16];
+
+	      (void )sprintf(buf, "%d", i);
+	      SET_STRING_ELT(rRow, i, mkChar(buf));
+	      REAL(rVol)[i] = (double )vol;
+              SET_STRING_ELT(rGType, i,
+	                     mkChar(WlzStringFromGreyType(gType, NULL)));
+	      REAL(rMin)[i] = min;
+	      REAL(rMax)[i] = max;
+	      REAL(rSum)[i] = sum;
+	      REAL(rSsq)[i] = ssq;
+	      REAL(rMean)[i] = mean;
+	      REAL(rStd)[i] = std;
+	    }
+	    else
+	    {
+	      break;
+	    }
+          }
+	  if(errNum == WLZ_ERR_NONE)
+	  {
+            SET_STRING_ELT(rCls, 0, mkChar("data.frame"));
+	    SET_VECTOR_ELT(rtn, 0, rVol);
+            SET_STRING_ELT(rNam, 0, mkChar("volume"));
+	    SET_VECTOR_ELT(rtn, 1, rGType);
+            SET_STRING_ELT(rNam, 1, mkChar("grey type"));
+	    SET_VECTOR_ELT(rtn, 2, rMin);
+            SET_STRING_ELT(rNam, 2, mkChar("min"));
+	    SET_VECTOR_ELT(rtn, 3, rMax);
+            SET_STRING_ELT(rNam, 3, mkChar("max"));
+	    SET_VECTOR_ELT(rtn, 4, rSum);
+            SET_STRING_ELT(rNam, 4, mkChar("sum"));
+	    SET_VECTOR_ELT(rtn, 5, rSsq);
+            SET_STRING_ELT(rNam, 5, mkChar("sum of squares"));
+	    SET_VECTOR_ELT(rtn, 6, rMean);
+            SET_STRING_ELT(rNam, 6, mkChar("mean"));
+	    SET_VECTOR_ELT(rtn, 7, rStd);
+            SET_STRING_ELT(rNam, 7, mkChar("standard deviation"));
+            classgets(rtn, rCls);
+	    namesgets(rtn, rNam);
+	    setAttrib(rtn, R_RowNamesSymbol, rRow);
+	  }
+	  UNPROTECT(12);
+	}
 	break;
       case RWLZ_NOBJOP_EMPTY:
 	{
@@ -362,6 +451,15 @@ SEXP				RWlzIsEmpty(
   SEXP		rObj;
 
   rObj = RWlzNObjOp(rObjs, RWLZ_NOBJOP_EMPTY);
+  return(rObj);
+}
+
+SEXP				RWlzGreyStats(
+				  SEXP rObjs)
+{
+  SEXP		rObj;
+
+  rObj = RWlzNObjOp(rObjs, RWLZ_NOBJOP_GREYSTATS);
   return(rObj);
 }
 
