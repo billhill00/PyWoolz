@@ -1,4 +1,4 @@
-WLZ_HOME	= /home/bill/MouseAtlas/Build
+WLZ_HOME	= /opt/MouseAtlas
 PKG_OBJECTS 	= RWlzObject.o
 PKG_CFLAGS	= -fopenmp
 PKG_CPPFLAGS 	= -I/usr/lib64/R/include \
